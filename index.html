@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuidado que Conta</title>
+<meta name="description" content="Planilha e cadernos dos sete indicadores do Componente de Qualidade da APS, para equipes e gestão.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="canonical" href="https://cuidadoqueconta.com.br/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cuidado que Conta">
+<meta property="og:title" content="Cuidado que Conta — indicadores da APS na prática">
+<meta property="og:description" content="Planilha que calcula a nota final do quadrimestre e aponta as pendências com nome, mais sete cadernos, um por indicador.">
+<meta property="og:url" content="https://cuidadoqueconta.com.br/">
+<meta property="og:image" content="https://cuidadoqueconta.com.br/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Cuidado que Conta — página de vendas. Uma coluna central de 1080px, bandas
+   alternadas em papel e bordô, borda picote marcando a troca de banda.
+   Tipografia Inter (marca), pesos 400/600/800. Tema único, claro. */
+:root{
+  color-scheme: light;
+  --paper:#FBF9F7;
+  --paper-2:#FFFFFF;
+  --bordo:#8F1F3F;
+  --bordo-esc:#6E1630;
+  --navy:#1A1A2E;
+  --cinza:#5E5E6B;
+  --linha:#E4DEDC;
+  --ok:#14603F;
+  --alerta:#A8480F;
+  --sans:'Inter','Helvetica Neue',Arial,sans-serif;
+  --c1:#0B5D5B; --c2:#A8480F; --c3:#8C1D53; --c4:#4A2E7A;
+  --c5:#8E1F17; --c6:#14415F; --c7:#14603F;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--navy);
+  font-family:var(--sans);font-size:17px;line-height:1.6;
+  font-weight:400;
+}
+img,svg{max-width:100%}
+a{color:var(--bordo)}
+:focus-visible{outline:3px solid var(--bordo);outline-offset:2px;border-radius:3px}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.banda{position:relative}
+.banda--bordo{background:var(--bordo);color:#fff}
+.banda--branca{background:var(--paper-2)}
+.picote{height:14px;background:
+  radial-gradient(circle at 13px 0,var(--paper) 12px,transparent 12.6px) 0 0/26px 14px repeat-x;}
+.banda--branca>.picote{background:
+  radial-gradient(circle at 13px 0,var(--paper) 12px,transparent 12.6px) 0 0/26px 14px repeat-x;}
+
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.2;letter-spacing:-.015em}
+h1{font-size:clamp(30px,5vw,46px);font-weight:800}
+h2{font-size:clamp(24px,3.4vw,33px);font-weight:800}
+h3{font-size:19px;font-weight:700}
+p{margin:0}
+.secao{padding:64px 0}
+.secao--curta{padding:44px 0}
+.olho{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--bordo)}
+.banda--bordo .olho{color:#F0CBD7}
+.lede{font-size:19px;color:var(--cinza);max-width:62ch}
+.banda--bordo .lede{color:#F6E2E8}
+.pilha{display:flex;flex-direction:column;gap:18px}
+.pilha--g{gap:28px}
+
+/* topo */
+header{background:var(--paper-2);border-bottom:1px solid var(--linha);position:relative}
+.topo{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px;max-width:1080px;margin:0 auto;flex-wrap:wrap}
+.marca{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+.marca svg{width:40px;height:40px;flex:none}
+.marca b{display:block;font-size:19px;font-weight:400;letter-spacing:-.01em}
+.marca b i{font-style:normal;color:var(--cinza)}
+.marca b em{font-style:normal;font-weight:800;color:var(--bordo)}
+.marca small{display:block;font-size:9.5px;letter-spacing:.17em;color:var(--cinza);font-weight:600}
+
+/* botões */
+.btn{display:inline-block;padding:14px 26px;border-radius:4px;font-weight:700;font-size:16px;
+  text-decoration:none;border:2px solid transparent;cursor:pointer}
+.btn--p{background:var(--bordo);color:#fff;border-color:var(--bordo)}
+.btn--p:hover{background:var(--bordo-esc);border-color:var(--bordo-esc)}
+.btn--s{background:transparent;color:var(--bordo);border-color:var(--bordo)}
+.btn--s:hover{background:#F6EDF0}
+.banda--bordo .btn--p{background:#fff;color:var(--bordo);border-color:#fff}
+.banda--bordo .btn--p:hover{background:#F6E2E8;border-color:#F6E2E8}
+.linha-btn{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.nota-btn{font-size:14px;color:var(--cinza)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:start;padding:66px 0 72px}
+.selo{display:inline-flex;align-items:center;gap:8px;background:#F6EDF0;color:var(--bordo-esc);
+  border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:600}
+
+/* painel exemplo */
+.painel{background:var(--paper-2);border:1px solid var(--linha);border-radius:8px;
+  box-shadow:0 14px 34px rgba(26,26,46,.09);overflow:hidden}
+.painel-topo{background:var(--navy);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.painel-topo span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#B9B9C6;font-weight:700}
+.painel-topo strong{font-size:15px;font-weight:600}
+table.ind{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums}
+table.ind th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--cinza);
+  padding:10px 10px;border-bottom:1px solid var(--linha);font-weight:700}
+table.ind td{padding:9px 10px;border-bottom:1px solid #F1EBE9}
+table.ind th.n,table.ind td.n{text-align:right}
+.cod{display:inline-block;min-width:26px;padding:2px 6px;border-radius:3px;color:#fff;font-size:11.5px;
+  font-weight:800;text-align:center;margin-right:8px}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid}
+.pill--otimo{color:var(--ok);border-color:#BFDCCD;background:#EDF6F1}
+.pill--bom{color:#14415F;border-color:#C3D5E0;background:#EDF3F7}
+.pill--suf{color:var(--alerta);border-color:#E6CDBB;background:#FBF1EA}
+.pill--reg{color:var(--bordo);border-color:#E7C6D0;background:#FAEFF2}
+.painel-pe{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;
+  background:#F7F3F1;border-top:1px solid var(--linha);flex-wrap:wrap}
+.painel-pe b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+.legenda{font-size:12.5px;color:var(--cinza);padding:10px 18px;background:var(--paper-2);border-top:1px solid var(--linha)}
+
+/* vídeo */
+.video-bloco{display:grid;grid-template-columns:1fr 340px;gap:44px;align-items:center}
+.video{width:100%;border-radius:10px;background:var(--navy);display:block;
+  box-shadow:0 16px 38px rgba(26,26,46,.16)}
+
+/* grades */
+.grade{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--paper-2);border:1px solid var(--linha);border-radius:8px;padding:22px}
+.card p{color:var(--cinza);font-size:15.5px;margin-top:8px}
+.card--ind{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.card--ind .faixa{height:6px}
+.card--ind .corpo{padding:16px 18px 18px}
+.card--ind h3{font-size:16.5px}
+.card--ind .peso{font-size:12.5px;color:var(--cinza);font-weight:600;margin-top:6px}
+
+/* planos */
+.planos{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;align-items:start}
+.plano{background:var(--paper-2);border:1px solid var(--linha);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.plano--destaque{border:2px solid var(--bordo);box-shadow:0 16px 36px rgba(143,31,63,.13)}
+.plano-topo{padding:22px 24px 18px;border-bottom:1px solid var(--linha)}
+.plano--destaque .plano-topo{background:var(--bordo);color:#fff;border-bottom:none}
+.plano-topo h3{font-size:22px}
+.plano-topo .para{font-size:14.5px;color:var(--cinza);margin-top:6px}
+.plano--destaque .plano-topo .para{color:#F6E2E8}
+.preco{display:flex;align-items:baseline;gap:8px;margin-top:16px}
+.preco b{font-size:38px;font-weight:800;letter-spacing:-.02em}
+.preco span{font-size:14px;opacity:.85}
+.plano-corpo{padding:22px 24px;display:flex;flex-direction:column;gap:16px;flex:1}
+ul.itens{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:15.5px}
+ul.itens li{display:flex;gap:10px;align-items:flex-start}
+ul.itens svg{width:17px;height:17px;flex:none;margin-top:4px}
+ul.itens li span{color:var(--cinza);font-size:14px;display:block}
+.plano-pe{padding:0 24px 24px;display:flex;flex-direction:column;gap:10px}
+.plano-pe .btn{text-align:center}
+
+/* base normativa */
+.normas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;font-size:15.5px}
+.normas li{padding-left:16px;border-left:3px solid var(--bordo)}
+.aviso{background:#F7F3F1;border:1px solid var(--linha);border-radius:8px;padding:18px 20px;font-size:14.5px;color:var(--cinza)}
+
+/* quem faz, prazo */
+.autora{display:grid;grid-template-columns:120px 1fr;gap:32px;align-items:start}
+.selo-a{width:120px;height:120px;border-radius:50%;background:var(--bordo);display:grid;place-items:center}
+.selo-a svg{width:68px;height:68px}
+.fala{font-size:21px;line-height:1.55;max-width:60ch}
+.fala+.fala{margin-top:14px}
+.prazo{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;background:#F6EDF0;
+  border:1px solid #E7C6D0;border-radius:8px;padding:14px 18px;font-size:15.5px;color:var(--bordo-esc)}
+.apos{font-size:14px;color:var(--cinza);margin-top:4px}
+.plano--destaque .apos{color:#F6E2E8}
+
+/* faq */
+details{background:var(--paper-2);border:1px solid var(--linha);border-radius:8px;padding:16px 20px}
+details+details{margin-top:12px}
+summary{font-weight:700;cursor:pointer;font-size:16.5px}
+summary::marker{color:var(--bordo)}
+details p{margin-top:10px;color:var(--cinza);font-size:15.5px;max-width:70ch}
+
+/* rodapé */
+footer{background:var(--navy);color:#C9C9D4;padding:44px 0 36px;font-size:14.5px}
+footer a{color:#fff}
+.rodape{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.rodape .marca b{color:#fff}
+.rodape .marca b i{color:#9A9AA8}
+.rodape .marca b em{color:#fff}
+.rodape .marca small{color:#9A9AA8}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:34px;padding:44px 0 52px}
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:1fr}
+  .planos{grid-template-columns:1fr}
+  .autora{grid-template-columns:1fr;gap:20px}
+  .video-bloco{grid-template-columns:1fr;gap:28px;justify-items:center}
+  .video{max-width:330px}
+  .secao{padding:48px 0}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .g4,.g2{grid-template-columns:1fr}
+  table.ind th:nth-child(3),table.ind td:nth-child(3){display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topo">
+    <a class="marca" href="#inicio" aria-label="Cuidado que Conta, página inicial">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Símbolo Cuidado que Conta">
+        <path d="M50 8 a42 42 0 1 1 -29.7 12.3" fill="none" stroke="#8F1F3F" stroke-width="13" stroke-linecap="round"/>
+        <path d="M31 51 L45 65 L72 33" fill="none" stroke="#1A1A2E" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>
+        <b>Cuidado <i>que</i> <em>Conta</em></b>
+        <small>INDICADORES DA APS NA PRÁTICA</small>
+      </span>
+    </a>
+    <div class="linha-btn">
+      <a class="btn btn--s" href="#planos">Ver os dois pacotes</a>
+    </div>
+  </div>
+</header>
+
+<main id="inicio">
+
+<!-- ============ HERO ============ -->
+<section class="banda banda--branca">
+  <div class="wrap hero">
+    <div class="pilha pilha--g">
+      <div class="pilha">
+        <span class="selo">Componente de Qualidade · 7 indicadores</span>
+        <h1>Descubra hoje quem da sua equipe está com boa prática pendente, e quanto isso vale na nota final.</h1>
+        <p class="lede">Uma planilha que recebe os dados da sua unidade, devolve a lista nominal de quem falta, calcula o conceito de cada um dos sete indicadores e aplica os pesos para mostrar a nota final do quadrimestre. Com sete cadernos que explicam, indicador por indicador, o que precisa estar registrado e onde.</p>
+      </div>
+      <div class="linha-btn">
+        <!-- TROCAR href pelo link de checkout do pacote Completo -->
+        <a class="btn btn--p" href="#planos">Quero a planilha e os cadernos</a>
+        <a class="btn btn--s" href="#dentro">Ver o que vem dentro</a>
+      </div>
+      <p class="nota-btn">Arquivos para download. Pagamento único, sem mensalidade.</p>
+    </div>
+
+    <div class="painel" role="group" aria-label="Exemplo de painel do quadrimestre">
+      <div class="painel-topo">
+        <span>Painel do quadrimestre</span>
+        <strong>eSF 01 · exemplo</strong>
+      </div>
+      <table class="ind">
+        <thead>
+          <tr><th>Indicador</th><th class="n">Peso</th><th>Conceito</th><th class="n">Nota × peso</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="cod" style="background:var(--c1)">C1</span>Acesso à APS</td><td class="n">1</td><td><span class="pill pill--bom">Bom</span></td><td class="n">0,75</td></tr>
+          <tr><td><span class="cod" style="background:var(--c2)">C2</span>Desenvolvimento infantil</td><td class="n">2</td><td><span class="pill pill--otimo">Ótimo</span></td><td class="n">2,00</td></tr>
+          <tr><td><span class="cod" style="background:var(--c3)">C3</span>Gestação e puerpério</td><td class="n">2</td><td><span class="pill pill--suf">Suficiente</span></td><td class="n">1,00</td></tr>
+          <tr><td><span class="cod" style="background:var(--c4)">C4</span>Diabetes</td><td class="n">1</td><td><span class="pill pill--bom">Bom</span></td><td class="n">0,75</td></tr>
+          <tr><td><span class="cod" style="background:var(--c5)">C5</span>Hipertensão</td><td class="n">1</td><td><span class="pill pill--reg">Regular</span></td><td class="n">0,25</td></tr>
+          <tr><td><span class="cod" style="background:var(--c6)">C6</span>Pessoa idosa</td><td class="n">1</td><td><span class="pill pill--bom">Bom</span></td><td class="n">0,75</td></tr>
+          <tr><td><span class="cod" style="background:var(--c7)">C7</span>Prevenção do câncer</td><td class="n">2</td><td><span class="pill pill--bom">Bom</span></td><td class="n">1,50</td></tr>
+        </tbody>
+      </table>
+      <div class="painel-pe">
+        <div>
+          <div style="font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);font-weight:700">Nota final</div>
+          <b>7,00</b>
+        </div>
+        <div style="text-align:right">
+          <span class="pill pill--bom" style="font-size:14px;padding:5px 14px">Bom</span>
+          <div style="font-size:12.5px;color:var(--cinza);margin-top:6px">Faltam 0,50 para Ótimo</div>
+        </div>
+      </div>
+      <p class="legenda">Exemplo ilustrativo com dados fictícios. Na planilha, cada linha abre a lista nominal de quem está com boa prática pendente.</p>
+    </div>
+  </div>
+  <div class="picote" aria-hidden="true"></div>
+</section>
+
+<!-- ============ VÍDEO ============ -->
+<section class="secao">
+  <div class="wrap video-bloco">
+    <div class="pilha">
+      <span class="olho">Em 40 segundos</span>
+      <h2>O que a planilha mostra que o relatório não mostra.</h2>
+      <p class="lede">Do conceito que chega com o quadrimestre fechado até a lista de pendências com nome, o peso de cada indicador e o efeito na nota final.</p>
+    </div>
+    <video class="video" controls playsinline preload="metadata" poster="poster.jpg">
+      <source src="Video_Divulgacao_Vertical_com_audio.mp4" type="video/mp4">
+      Seu navegador não reproduz este vídeo.
+    </video>
+  </div>
+</section>
+
+<!-- ============ O PROBLEMA ============ -->
+<section class="secao">
+  <div class="wrap pilha pilha--g">
+    <div class="pilha">
+      <span class="olho">Por que isso existe</span>
+      <h2>O conceito chega depois do quadrimestre fechado. Até lá, já não dá para corrigir.</h2>
+      <p class="lede">O relatório mostra o percentual, mas não diz de quem. A equipe fica sabendo que o indicador caiu sem saber qual registro faltou, em qual prontuário, de qual pessoa. E os indicadores não valem o mesmo: desenvolvimento infantil, gestação e prevenção do câncer pesam o dobro dos outros quatro.</p>
+    </div>
+    <div class="grade g3">
+      <div class="card">
+        <h3>Lista nominal, não percentual</h3>
+        <p>A planilha devolve quem está pendente e qual boa prática falta, para a equipe buscar nome por nome antes de o quadrimestre fechar.</p>
+      </div>
+      <div class="card">
+        <h3>O peso de cada indicador</h3>
+        <p>C2, C3 e C7 valem 2. C1, C4, C5 e C6 valem 1. Cada caderno mostra quanto o seu indicador soma ou tira da nota final.</p>
+      </div>
+      <div class="card">
+        <h3>Registro certo, no lugar certo</h3>
+        <p>Para cada boa prática: o que registrar, em qual campo do prontuário e o que anula o registro feito fora do prazo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OS SETE ============ -->
+<section class="banda banda--branca">
+  <div class="wrap secao pilha pilha--g">
+    <div class="pilha">
+      <span class="olho">Os sete cadernos</span>
+      <h2>Um caderno por indicador, com as cores e os números do seu.</h2>
+      <p class="lede">Cada caderno traz as boas práticas e a pontuação de cada uma, quem entra e quem sai do denominador, os prazos que invalidam o registro, as faixas de conceito, o erro que mais custa pontos e o peso do indicador na nota final.</p>
+    </div>
+    <div class="grade g4">
+      <article class="card card--ind"><div class="faixa" style="background:var(--c1)"></div><div class="corpo"><h3>C1 · Mais acesso à APS</h3><div class="peso">Peso 1 na nota final</div></div></article>
+      <article class="card card--ind"><div class="faixa" style="background:var(--c2)"></div><div class="corpo"><h3>C2 · Desenvolvimento infantil</h3><div class="peso">Peso 2 na nota final</div></div></article>
+      <article class="card card--ind"><div class="faixa" style="background:var(--c3)"></div><div class="corpo"><h3>C3 · Gestação e puerpério</h3><div class="peso">Peso 2 na nota final</div></div></article>
+      <article class="card card--ind"><div class="faixa" style="background:var(--c4)"></div><div class="corpo"><h3>C4 · Pessoa com diabetes</h3><div class="peso">Peso 1 na nota final</div></div></article>
+      <article class="card card--ind"><div class="faixa" style="background:var(--c5)"></div><div class="corpo"><h3>C5 · Pessoa com hipertensão</h3><div class="peso">Peso 1 na nota final</div></div></article>
+      <article class="card card--ind"><div class="faixa" style="background:var(--c6)"></div><div class="corpo"><h3>C6 · Pessoa idosa</h3><div class="peso">Peso 1 na nota final</div></div></article>
+      <article class="card card--ind"><div class="faixa" style="background:var(--c7)"></div><div class="corpo"><h3>C7 · Prevenção do câncer</h3><div class="peso">Peso 2 na nota final</div></div></article>
+      <article class="card card--ind" style="background:#F7F3F1"><div class="faixa" style="background:var(--bordo)"></div><div class="corpo"><h3>Impressos dos sete</h3><div class="peso">Pôster A3, cartão de bolso A6 frente e verso e ficha-espelho A4</div></div></article>
+    </div>
+  </div>
+  <div class="picote" aria-hidden="true"></div>
+</section>
+
+<!-- ============ O QUE VEM DENTRO ============ -->
+<section class="secao" id="dentro">
+  <div class="wrap pilha pilha--g">
+    <div class="pilha">
+      <span class="olho">O que vem dentro</span>
+      <h2>Material para usar na consulta, na parede da sala e na reunião de equipe.</h2>
+    </div>
+    <div class="grade g3">
+      <div class="card"><h3>Planilha dos sete indicadores</h3><p>Arquivo .xlsx com fórmulas abertas. Recebe os dados, aponta as pendências por nome, classifica cada indicador e calcula a nota final com os pesos.</p></div>
+      <div class="card"><h3>Pôsteres A3</h3><p>Um por indicador, para a parede da sala: boas práticas, pontos de cada uma, prazos e o erro que mais custa pontos.</p></div>
+      <div class="card"><h3>Cartões de bolso A6</h3><p>Frente e verso, para levar no jaleco durante o atendimento.</p></div>
+      <div class="card"><h3>Fichas-espelho A4</h3><p>Para unidade sem computador na sala: registro em papel com os campos que o indicador exige.</p></div>
+      <div class="card"><h3>Documento técnico e guia operacional</h3><p>Numerador, denominador, critérios de elegibilidade, faixas de conceito e o fluxo de trabalho da equipe.</p></div>
+      <div class="card"><h3>Painel de gestão quadrimestral</h3><p>Para apresentar o resultado à coordenação, com a leitura de cada indicador e o que explica a variação.</p></div>
+      <div class="card"><h3>Plano de implantação de 90 dias</h3><p>O que fazer em cada semana, quem faz e o que precisa estar pronto no fim de cada mês.</p></div>
+      <div class="card"><h3>Kit de reunião de equipe e roteiro de auditoria</h3><p>Pauta pronta, slides editáveis e o roteiro para conferir o registro por amostra de prontuários.</p></div>
+      <div class="card"><h3>Calculadora de impacto financeiro</h3><p>Relaciona o conceito de cada indicador com o cofinanciamento, para dimensionar o que está em jogo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLANOS ============ -->
+<section class="banda banda--branca" id="planos">
+  <div class="wrap secao pilha pilha--g">
+    <div class="pilha">
+      <span class="olho">Dois pacotes</span>
+      <h2>Um para quem atende. Outro para quem responde pela unidade.</h2>
+      <p class="lede">Os dois trazem os sete cadernos e os impressos. O Completo acrescenta a planilha e o material de condução da equipe, com direito de uso por toda a unidade.</p>
+      <!-- TROCAR a data pelo último dia do preço de lançamento -->
+      <p class="prazo"><strong>Preço de lançamento até [DATA].</strong> Depois dessa data os dois pacotes sobem para R$ 97 e R$ 297, e ficam nesse valor.</p>
+    </div>
+
+    <div class="planos">
+      <article class="plano">
+        <div class="plano-topo">
+          <h3>Essencial</h3>
+          <p class="para">Para médico, enfermeiro e técnico que atende e precisa acertar o registro.</p>
+          <div class="preco"><b>R$ 67</b><span>pagamento único</span></div>
+          <p class="apos">Preço de lançamento. Depois passa para R$ 97.</p>
+        </div>
+        <div class="plano-corpo">
+          <ul class="itens">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>7 cadernos ilustrados, um por indicador <span>PDF, um arquivo por indicador</span></div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>7 pôsteres A3 para a parede da sala</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>7 cartões de bolso A6, frente e verso</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>7 fichas-espelho A4 para registro em papel</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Guia do ACS <span>bônus</span></div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Atualização quando a norma mudar <span>bônus</span></div></li>
+          </ul>
+          <p style="font-size:14px;color:var(--cinza)">Licença de uso individual.</p>
+        </div>
+        <div class="plano-pe">
+          <!-- TROCAR href pelo link de checkout do Essencial -->
+          <a class="btn btn--s" href="#contato">Comprar o Essencial</a>
+        </div>
+      </article>
+
+      <article class="plano plano--destaque">
+        <div class="plano-topo">
+          <h3>Completo</h3>
+          <p class="para">Para coordenação e gestão, com uso pela equipe toda da unidade.</p>
+          <div class="preco"><b>R$ 197</b><span>pagamento único</span></div>
+          <p class="apos">Preço de lançamento. Depois passa para R$ 297.</p>
+        </div>
+        <div class="plano-corpo">
+          <ul class="itens">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Tudo do Essencial</strong>, com os sete cadernos e os impressos</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Planilha dos sete indicadores</strong> <span>pendências por nome, conceito de cada indicador e nota final com os pesos</span></div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Documento técnico e guia operacional da equipe</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Painel de gestão quadrimestral</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Plano de implantação de 90 dias e kit de boas-vindas</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Kit de reunião de equipe e roteiro de auditoria de registro</div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Slides e pôsteres editáveis <span>PPTX, para adaptar ao nome da unidade</span></div></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l5 5L20 6" fill="none" stroke="#8F1F3F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Calculadora de impacto financeiro</div></li>
+          </ul>
+          <p style="font-size:14px;color:var(--cinza)">Licença de uso pela equipe da unidade.</p>
+        </div>
+        <div class="plano-pe">
+          <!-- TROCAR href pelo link de checkout do Completo -->
+          <a class="btn btn--p" href="#contato">Comprar o Completo</a>
+          <p class="nota-btn" style="text-align:center">Entrega por link de download após a confirmação do pagamento.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="picote" aria-hidden="true"></div>
+</section>
+
+<!-- ============ BASE NORMATIVA ============ -->
+<section class="secao">
+  <div class="wrap grade g2" style="align-items:start;gap:44px">
+    <div class="pilha">
+      <span class="olho">De onde vem o conteúdo</span>
+      <h2>Escrito a partir das notas oficiais, com a fonte citada em cada definição.</h2>
+      <p class="lede">Numeradores, denominadores, critérios de elegibilidade, prazos e faixas de conceito são os das notas metodológicas. Onde a planilha precisa de uma decisão que a norma não define, isso aparece marcado como regra operacional da planilha, e não como regra do Ministério.</p>
+    </div>
+    <div class="pilha">
+      <ul class="normas">
+        <li>Portaria GM/MS nº 3.493/2024</li>
+        <li>Notas metodológicas dos indicadores C1 a C7</li>
+        <li>Nota Técnica nº 6/2025-DEAPS/SAPS/MS, sobre o cálculo da nota final</li>
+        <li>Nota Técnica nº 30/2025-CGESCO/DESCO/SAPS/MS, sobre vinculação</li>
+        <li>Portaria SAPS/MS nº 161/2024</li>
+      </ul>
+      <div class="aviso">
+        <strong style="color:var(--navy)">Material independente.</strong> Não tem vínculo, patrocínio nem aprovação do Ministério da Saúde. A norma é a referência oficial; em caso de divergência, vale o texto publicado.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRIVACIDADE ============ -->
+<section class="banda banda--bordo">
+  <div class="wrap secao--curta grade g2" style="align-items:center;gap:36px">
+    <div class="pilha">
+      <span class="olho">Dados de pacientes</span>
+      <h2 style="font-size:clamp(21px,2.6vw,27px)">A planilha roda no seu computador. O arquivo fica com você.</h2>
+    </div>
+    <p class="lede">Não há envio de dados para nenhum servidor. A planilha pede só o que o indicador exige e o guia traz as orientações de proteção do arquivo e de controle de acesso para a lista nominal.</p>
+  </div>
+  <div class="picote" aria-hidden="true"></div>
+</section>
+
+<!-- ============ QUEM FAZ ============ -->
+<section class="secao">
+  <div class="wrap pilha pilha--g">
+    <span class="olho">Quem faz</span>
+    <div class="autora">
+      <div class="selo-a">
+        <svg viewBox="0 0 100 100" role="img" aria-label="Símbolo Cuidado que Conta">
+          <path d="M50 8 a42 42 0 1 1 -29.7 12.3" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round"/>
+          <path d="M31 51 L45 65 L72 33" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h2 style="font-size:clamp(22px,2.8vw,30px)">Feito por médica de equipe de Saúde da Família, para a própria equipe.</h2>
+        <p class="fala" style="margin-top:18px">A planilha e os cadernos nasceram do trabalho numa unidade rural, longe da sede, com registro em papel na sala de atendimento. O problema que eles resolvem é o que a equipe vivia: descobrir o conceito só quando o quadrimestre já tinha fechado.</p>
+        <p class="fala" style="color:var(--cinza)">Por isso o material não para na explicação do indicador. Ele diz em qual campo registrar, o que invalida o registro feito fora do prazo e quem já saiu da conta. Cada definição vem das notas metodológicas oficiais, com a fonte citada.</p>
+        <p class="fala" style="color:var(--cinza)">Dúvida antes de comprar: escreva para <a href="mailto:cuidadoqueconta@gmail.com">cuidadoqueconta@gmail.com</a>. Quem responde sou eu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="secao">
+  <div class="wrap pilha pilha--g">
+    <div class="pilha">
+      <span class="olho">Perguntas</span>
+      <h2>O que costumam perguntar antes de comprar.</h2>
+    </div>
+    <div>
+      <details open>
+        <summary>Como recebo o material?</summary>
+        <p>Por link de download, depois da confirmação do pagamento. Os PDFs saem com uma marca d'água discreta com o e-mail do comprador, que identifica a cópia sem atrapalhar a leitura ou a impressão.</p>
+      </details>
+      <details>
+        <summary>A planilha funciona em qual programa?</summary>
+        <p>É um arquivo .xlsx com as fórmulas abertas, feito para o Excel. Não precisa de internet, de login nem de instalar nada.</p>
+      </details>
+      <details>
+        <summary>Preciso de computador na sala de atendimento?</summary>
+        <p>Não. As fichas-espelho A4 existem para a unidade que registra em papel: a equipe anota na ficha durante o atendimento e lança na planilha depois, no computador da unidade.</p>
+      </details>
+      <details>
+        <summary>Posso usar com a equipe toda?</summary>
+        <p>No Essencial, a licença é individual. No Completo, o uso é liberado para a equipe da unidade, incluindo imprimir os impressos e adaptar os slides e pôsteres editáveis com o nome da unidade.</p>
+      </details>
+      <details>
+        <summary>E se a norma mudar?</summary>
+        <p>A atualização está incluída nos dois pacotes. Quando sair nota ou portaria que altere algum indicador, o material revisado chega no mesmo e-mail da compra.</p>
+      </details>
+      <details>
+        <summary>Serve para equipe de qualquer município?</summary>
+        <p>Sim. O conteúdo segue as notas metodológicas nacionais dos sete indicadores do Componente de Qualidade, que valem para todas as equipes avaliadas por eles. Indicador local que o seu município acompanhe por fora não está contemplado.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FECHAMENTO ============ -->
+<section class="banda banda--branca" id="contato">
+  <div class="wrap secao pilha pilha--g" style="align-items:flex-start">
+    <div class="pilha">
+      <h2>Comece pelo indicador que está puxando a sua nota para baixo.</h2>
+      <p class="lede">Se você responde pela unidade, o Completo é o que resolve: a planilha aponta as pendências com nome e o material de condução organiza a equipe no quadrimestre. Se você atende e quer acertar o registro, o Essencial dá conta.</p>
+    </div>
+    <div class="linha-btn">
+      <a class="btn btn--p" href="#planos">Ver os dois pacotes</a>
+      <a class="btn btn--s" href="mailto:cuidadoqueconta@gmail.com">Falar antes de comprar</a>
+    </div>
+    <p class="nota-btn">Dúvidas por e-mail: <strong>cuidadoqueconta@gmail.com</strong></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap rodape">
+    <a class="marca" href="#inicio">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Símbolo Cuidado que Conta">
+        <path d="M50 8 a42 42 0 1 1 -29.7 12.3" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round"/>
+        <path d="M31 51 L45 65 L72 33" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>
+        <b>Cuidado <i>que</i> <em>Conta</em></b>
+        <small>INDICADORES DA APS NA PRÁTICA</small>
+      </span>
+    </a>
+    <div style="max-width:52ch">
+      <p>Material autoral sobre os indicadores do Componente de Qualidade da Atenção Primária. Reprodução e revenda não autorizadas.</p>
+      <p style="margin-top:10px">Contato: <a href="mailto:cuidadoqueconta@gmail.com">cuidadoqueconta@gmail.com</a></p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

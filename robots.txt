@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cuidadoqueconta.com.br/sitemap.xml
